@@ -26,3 +26,129 @@ A small portfolio database project built from scratch in MySQL to practice:
 ```sql
 CREATE DATABASE snow_leopard_codex;
 USE snow_leopard_codex;
+
+---TABLES---
++-------------+------------+---------------+---------------------+---------------+-------------------+
+| creature_id | name       | species       | realm               | ability_count | avg_ability_level |
++-------------+------------+---------------+---------------------+---------------+-------------------+
+|           1 | Aurora     | Snow Leopard  | Frostpeak Mountains |             2 |              4.50 |
+|           2 | Cinderwing | Dragon        | Emberglow Caverns   |             1 |              8.00 |
+|           4 | Nyx        | Shadow Lynx   | Frostpeak Mountains |             1 |              7.00 |
+|           3 | Sylphria   | Forest Sprite | Moonpetal Forest    |             1 |              5.00 |
++-------------+------------+---------------+---------------------+---------------+-------------------+
+
++---------------------+---------------+------------+--------------+
+| realm               | magic_density | creature   | species      |
++---------------------+---------------+------------+--------------+
+| Emberglow Caverns   |            92 | Cinderwing | Dragon       |
+| Frostpeak Mountains |            87 | Aurora     | Snow Leopard |
+| Frostpeak Mountains |            87 | Nyx        | Shadow Lynx  |
++---------------------+---------------+------------+--------------+
+
++------------+---------------+----------------+---------+----------------+---------------------+
+| creature   | species       | ability_name   | element | acquired_level | realm               |
++------------+---------------+----------------+---------+----------------+---------------------+
+| Aurora     | Snow Leopard  | Frost Aura     | Ice     |              6 | Frostpeak Mountains |
+| Aurora     | Snow Leopard  | Veilwalk       | Shadow  |              3 | Frostpeak Mountains |
+| Cinderwing | Dragon        | Molten Breath  | Fire    |              8 | Emberglow Caverns   |
+| Nyx        | Shadow Lynx   | Starstep Dash  | Storm   |              7 | Frostpeak Mountains |
+| Sylphria   | Forest Sprite | Moonlight Heal | Nature  |              5 | Moonpetal Forest    |
++------------+---------------+----------------+---------+----------------+---------------------+
+
+
+Example Queries:
+
+UNIQUE CREATURE ABILITIES COUNT:
+> SELECT
+->   a.ability_name,
+->   a.element,
+->   COUNT(*) AS creatures_with_ability
+-> FROM creature_abilities ca
+-> JOIN abilities a ON a.ability_id = ca.ability_id
+-> GROUP BY a.ability_id
+-> ORDER BY creatures_with_ability DESC, a.ability_name;
+
+RESULT:
++----------------+---------+------------------------+
+| ability_name   | element | creatures_with_ability |
++----------------+---------+------------------------+
+| Frost Aura     | Ice     |                      1 |
+| Molten Breath  | Fire    |                      1 |
+| Moonlight Heal | Nature  |                      1 |
+| Starstep Dash  | Storm   |                      1 |
+| Veilwalk       | Shadow  |                      1 |
++----------------+---------+------------------------+
+
+CREATURE PROFILES (realm + ability count):
+SELECT
+  c.creature_id,
+  c.name,
+  c.species,
+  r.name AS realm,
+  COUNT(ca.ability_id) AS ability_count,
+  ROUND(AVG(ca.acquired_level), 2) AS avg_ability_level
+FROM creatures c
+LEFT JOIN realms r ON c.realm_id = r.realm_id
+LEFT JOIN creature_abilities ca ON ca.creature_id = c.creature_id
+GROUP BY c.creature_id, r.name
+ORDER BY ability_count DESC, avg_ability_level DESC;
+
+RESULT:
++-------------+------------+---------------+---------------------+---------------+-------------------+
+| creature_id | name       | species       | realm               | ability_count | avg_ability_level |
++-------------+------------+---------------+---------------------+---------------+-------------------+
+|           1 | Aurora     | Snow Leopard  | Frostpeak Mountains |             2 |              4.50 |
+|           2 | Cinderwing | Dragon        | Emberglow Caverns   |             1 |              8.00 |
+|           4 | Nyx        | Shadow Lynx   | Frostpeak Mountains |             1 |              7.00 |
+|           3 | Sylphria   | Forest Sprite | Moonpetal Forest    |             1 |              5.00 |
++-------------+------------+---------------+---------------------+---------------+-------------------+
+
+MOST COMMON ABILITIES:
+SELECT
+  a.ability_name,
+  a.element,
+  COUNT(*) AS creatures_with_ability
+FROM creature_abilities ca
+JOIN abilities a ON a.ability_id = ca.ability_id
+GROUP BY a.ability_id
+ORDER BY creatures_with_ability DESC, a.ability_name;
+
+RESULT:
++----------------+---------+------------------------+
+| ability_name   | element | creatures_with_ability |
++----------------+---------+------------------------+
+| Frost Aura     | Ice     |                      1 |
+| Molten Breath  | Fire    |                      1 |
+| Moonlight Heal | Nature  |                      1 |
+| Starstep Dash  | Storm   |                      1 |
+| Veilwalk       | Shadow  |                      1 |
++----------------+---------+------------------------+
+
+ETC.
+
+---
+
+BACKUP + RESTORE:
+Backup + Restore:
+Backup
+mysqldump -u root -p snow_leopard_codex > snow_leopard_codex.sql
+
+Restore (to a fresh database):
+CREATE DATABASE snow_leopard_codex_restore;
+mysql -u root -p snow_leopard_codex_restore < snow_leopard_codex.sql
+
+
+---
+
+Notes on Constraints:
+Foreign key constraints enforce relationship integrity (no orphan records)
+Junction table uses a composite primary key (creature_id, ability_id)
+CHECK constraints ensure values stay in expected ranges
+
+---
+
+🌟 Next Improvements:
+Add observations table (timestamps + notes) 
+Import data from CSV with a Python loader script
+Add indexes and run query performance tests
+Rebuild this project in PostgreSQL 
