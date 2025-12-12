@@ -56,3 +56,35 @@ CREATE DATABASE snow_leopard_codex;
 USE snow_leopard_codex;
 # Snow Leopard Codex (MySQL) — Build-from-Scratch Relational Database
 
+### 2. Load schema
+SOURCE schema.sql;
+
+### 3. Load seed data
+SOURCE seed.sql;
+
+### 4. Run queries
+SOURCE queries.sql;
+
+💾 Backup & Restore
+This project includes a validated backup and restore workflow using:
+mysqldump.exe for exporting data
+mysql.exe for restoring into a fresh database
+See backup_restore.md for exact commands and troubleshooting notes.
+
+🧩 Lessons Learned (Highlights)
+Difference between mysqldump (export) and mysql (import)
+How USE database; inside dumps can redirect restores
+Why restore-friendly dumps matter for portability
+How to debug MySQL CLI issues on Windows paths
+How to think operationally, not just syntactically
+
+✨ Why This Project Matters
+This project demonstrates not just SQL syntax, but:
+Systems thinking
+Debugging real tooling issues
+Understanding of database lifecycle operations
+Readiness for real-world data engineering tasks
+
+
+*** Created by Amber White — Data Engineering & Architecture Portfolio ***
+
