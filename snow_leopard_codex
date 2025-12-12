@@ -1,0 +1,28 @@
+# Snow Leopard Codex (MySQL) — Build-from-Scratch Relational Database
+
+A small portfolio database project built from scratch in MySQL to practice:
+- schema design and normalization
+- primary keys, foreign keys, and constraints
+- many-to-many relationships via a junction table
+- querying across multiple tables
+- backup + restore workflow using `mysqldump`
+
+## Schema Overview
+
+**Tables**
+- `realms` — environment metadata (magic density, climate)
+- `creatures` — creatures and their home realm
+- `abilities` — ability catalog with elemental types
+- `creature_abilities` — junction table linking creatures to abilities + acquired level
+
+**Relationships**
+- `creatures.realm_id → realms.realm_id` (many creatures to one realm)
+- `creature_abilities.creature_id → creatures.creature_id`
+- `creature_abilities.ability_id → abilities.ability_id`  
+(many-to-many between creatures and abilities)
+
+## Setup (MySQL)
+
+```sql
+CREATE DATABASE snow_leopard_codex;
+USE snow_leopard_codex;
